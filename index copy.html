@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat App</title>
+    <style>
+        #messageInput, #messageInputButton{
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="chat"></div>
+
+    <form id="loginForm">
+        <input type="text" id="username" name="username" placeholder="Type a id..."><br><br>
+        <input type="password" id="password" name="password" placeholder="Type a pw..."><br><br>
+        <button type="submit" id="loginButton">Login</button>
+    </form>
+
+    <input type="text" id="messageInput" placeholder="Type a message...">
+    <button id= "messageInputButton" onclick="sendMessage()">Send</button>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:8080');
+        const chat = document.getElementById('chat');
+        
+        const IdInput = document.getElementById('IdInput');
+        const PwInput = document.getElementById('PwInput');
+        const messageInput = document.getElementById('messageInput');
+
+        ws.onmessage = function(event) {
+            // event.data가 Blob 인스턴스일 경우 FileReader를 사용해서 읽어오기
+            if (event.data instanceof Blob) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    const message = document.createElement('p');
+                    message.textContent = reader.result;
+                    chat.appendChild(message);
+                };
+                reader.readAsText(event.data);
+            } else {
+                // 메시지가 문자열인 경우, 직접 표시
+                const message = document.createElement('p');
+                message.textContent = event.data;
+                chat.appendChild(message);
+            }
+        };
+        
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // 폼 제출 방지
+            document.getElementById("messageInput").style.display = "block"; // 메시지 입력창을 보이도록 변경
+            document.getElementById("messageInputButton").style.display = "block"; //메시지 입력 버튼 보이도록
+            document.getElementById("username").style.display = "none"; //아이디 입력 버튼 안보이게
+            document.getElementById("password").style.display = "none"; //비번 입력 버튼 안보이게
+            document.getElementById("loginButton").style.display = "none"; //로그인 버튼 안보이게
+          });
+
+        function sendMessage() {
+            const message = messageInput.value;
+            ws.send(message);
+            messageInput.value = '';
+        }
+    </script>
+</body>
+</html>
