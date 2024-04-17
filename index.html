@@ -22,6 +22,7 @@
 
     <input type="text" id="messageInput" placeholder="Type a message...">
     <button id="messageInputButton" onclick="sendMessage()">Send</button>
+    <button onclick="clearChat()">Clear Chat</button>
 
     <script>
         const ws = new WebSocket('ws://localhost:8080');
@@ -63,6 +64,19 @@
             ws.send(message);
             messageInput.value = '';
         }
+        function clearChat() {// 대화창을 비우는 함수를 정의합니다.
+            const messages = chat.querySelectorAll('p');
+            if (messages.length > 0) {
+                const lastMessage = messages[messages.length - 1];
+                lastMessage.remove();
+            }
+        }
+        // Enter 키 누를 때 메시지 전송
+        messageInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
     </script>
 </body>
 
