@@ -9,6 +9,7 @@
             display: none;
         }
     </style>
+
 </head>
 
 <body>
@@ -21,14 +22,16 @@
     </form>
 
     <input type="text" id="messageInput" placeholder="Type a message...">
+
     <button id="messageInputButton" onclick="sendMessage()">Send</button>
+
+    <div id="dot"></div>
+    <div id="dash"></div>
 
     <script>
         const ws = new WebSocket('ws://localhost:8080');
         const chat = document.getElementById('chat');
 
-        const IdInput = document.getElementById('IdInput');
-        const PwInput = document.getElementById('PwInput');
         const messageInput = document.getElementById('messageInput');
 
         ws.onmessage = function (event) {
@@ -60,9 +63,14 @@
 
         function sendMessage() {
             const message = messageInput.value;
-            ws.send(message);
+            const morseMessage = stringToMorse(message); // 메시지를 모스 부호로 변환
+            ws.send(morseMessage);
             messageInput.value = '';
         }
+
+
+
+
     </script>
 </body>
 
