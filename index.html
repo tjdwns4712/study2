@@ -9,7 +9,6 @@
             display: none;
         }
     </style>
-
 </head>
 
 <body>
@@ -22,16 +21,15 @@
     </form>
 
     <input type="text" id="messageInput" placeholder="Type a message...">
-
     <button id="messageInputButton" onclick="sendMessage()">Send</button>
-
-    <div id="dot"></div>
-    <div id="dash"></div>
+    <button onclick="clearChat()">Clear Chat</button>
 
     <script>
         const ws = new WebSocket('ws://localhost:8080');
         const chat = document.getElementById('chat');
 
+        const IdInput = document.getElementById('IdInput');
+        const PwInput = document.getElementById('PwInput');
         const messageInput = document.getElementById('messageInput');
 
         ws.onmessage = function (event) {
@@ -40,14 +38,26 @@
                 const reader = new FileReader();
                 reader.onload = function () {
                     const message = document.createElement('p');
-                    message.textContent = reader.result;
+                    const text = reader.result;
+                    for (let i = 0; i < text.length; i++) {
+                        const charSpan = document.createElement('span');
+                        charSpan.textContent = text[i];
+                        charSpan.style.color = getRandomColor();
+                        message.appendChild(charSpan);
+                    }
                     chat.appendChild(message);
                 };
                 reader.readAsText(event.data);
             } else {
                 // 메시지가 문자열인 경우, 직접 표시
                 const message = document.createElement('p');
-                message.textContent = event.data;
+                const text = event.data;
+                for (let i = 0; i < text.length; i++) {
+                    const charSpan = document.createElement('span');
+                    charSpan.textContent = text[i];
+                    charSpan.style.color = getRandomColor();
+                    message.appendChild(charSpan);
+                }
                 chat.appendChild(message);
             }
         };
@@ -63,14 +73,38 @@
 
         function sendMessage() {
             const message = messageInput.value;
-            const morseMessage = stringToMorse(message); // 메시지를 모스 부호로 변환
-            ws.send(morseMessage);
+            ws.send(message);
             messageInput.value = '';
         }
+        function clearChat() {// 대화창을 비우는 함수를 정의합니다.
+            const messages = chat.querySelectorAll('p');
+            if (messages.length > 0) {
+                const lastMessage = messages[messages.length - 1];
+                lastMessage.remove();
+            }
+        }
+        // Enter 키 누를 때 메시지 전송
+        messageInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+            else {
+                const charSpan = document.createElement('span');
+                charSpan.textContent = event.key;
+                charSpan.style.color = getRandomColor();
+                messageInput.appendChild(charSpan);
+            }
+        });
 
-
-
-
+        // 랜덤한 색상을 생성하는 함수
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
     </script>
 </body>
 
