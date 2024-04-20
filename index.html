@@ -3,6 +3,7 @@
 
 <head>
     <title>Chat App</title>
+    <link rel="stylesheet" href="./style.css">
     <style>
         /* 폭발 애니메이션을 정의합니다. */
         @keyframes explode {
@@ -30,17 +31,17 @@
 </head>
 
 <body>
-    <div id="chat"></div>
+    <div class="chat" id="chat"></div> <!--lift_yun) css 적용-->
 
     <form id="loginForm">
         <input type="text" id="username" name="username" placeholder="Type a id..."><br><br>
         <input type="password" id="password" name="password" placeholder="Type a pw..."><br><br>
         <button type="submit">Login</button>
     </form>
-
     <input type="text" id="messageInput" placeholder="Type a message...">
     <button id="messageInputButton" onclick="sendMessage()">Send</button>
     <button id="clearButton" onclick="clearChat()">Clear Chat</button>
+
 
     <script>
         const ws = new WebSocket('ws://localhost:8080');
@@ -53,6 +54,7 @@
                 const reader = new FileReader();
                 reader.onload = function () {
                     const message = document.createElement('p');
+                    message.classList.add('from-me'); //lif_yun생성 (채팅에 버블 형태 삽입)
                     const text = reader.result;
                     for (let i = 0; i < text.length; i++) {
                         const charSpan = document.createElement('span');
@@ -66,6 +68,7 @@
             } else {
                 // 메시지가 문자열인 경우, 직접 표시
                 const message = document.createElement('p');
+                message.classList.add('from-me');//lif_yun생성 (채팅에 버블 형태 삽입)
                 const text = event.data;
                 for (let i = 0; i < text.length; i++) {
                     const charSpan = document.createElement('span');
